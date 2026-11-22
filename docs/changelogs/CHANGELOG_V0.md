@@ -4,3 +4,5 @@
 
 - Migrate the controller and instrument RTL and both behavioral testbenches. Bind source candidates to the native Contracts receipt.
 - Chuyển RTL bộ điều khiển, thiết bị đo và cả hai testbench hành vi. Gắn ứng viên mã nguồn với biên nhận Contracts native.
+- Link the verified RTL scaffold to the FPGA and CIRNET Lab-First targets.
+- Liên kết RTL scaffold đã kiểm chứng với kiến trúc đích FPGA và CIRNET Lab-First.

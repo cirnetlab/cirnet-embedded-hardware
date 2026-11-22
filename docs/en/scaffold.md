@@ -4,7 +4,7 @@ English · [Tiếng Việt](../vi/scaffold.md)
 
 [Documentation index](index.md)
 
-The [FPGA Architecture](https://github.com/cirnetlab/cirnet-rules/blob/887578e8c0aa06882cfa19138955fb54019fb428/docs/cirnetlab-FPGA-architecture-en.md) defines the board design target within the [Lab-First safety rules](https://github.com/cirnetlab/cirnet-rules/blob/887578e8c0aa06882cfa19138955fb54019fb428/docs/tai-lieu-kien-tuc-he-thong/cirnet-architecture-lab-first-en.md).
+The [FPGA Architecture](https://github.com/cirnetlab/cirnet-remote-next/blob/master/docs/cirnetlab-FPGA-architecture-en.md) defines the board design target within the [Lab-First safety rules](https://github.com/cirnetlab/cirnet-remote-next/blob/master/docs/cirnet-architecture-lab-first-en.md).
 
 | Owner | Boundary |
 | --- | --- |
