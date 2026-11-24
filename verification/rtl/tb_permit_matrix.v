@@ -14,7 +14,7 @@ module tb_permit_matrix;
     wire la,scope,generator,capture_valid,output_enable,sdram_request;
     integer permit_index,tick;
     reg previous_phase;
-    // Exercise legacy wrapper forwarding against the unchanged permit matrix.
+    // Exercise the canonical controller and unavailable instrument interfaces.
     cirnet_experiment_top dut(.*);
     cirnet_instrument_scaffold instruments(
         .control_clk(clk),.acquisition_clk(clk),.generator_clk(clk),.sdram_clk(clk),.reset_n(reset_n),
@@ -65,6 +65,27 @@ module tb_permit_matrix;
     initial begin
         #1;reset();
         scan(0);safe_outputs();command(2,0);safe_outputs();
+        command(1,1);
+        fork
+            command(9,1); // Poll STATUS on the same edge as failed scan completion.
+            begin
+                @(negedge clk);scan_done=1;scan_success=0;
+                @(posedge clk);#1;
+                if(state!==0 || error_code!==3 || topology_scan_enable!==0)
+                    $fatal(1,"STATUS masked failed scan completion");
+                safe_outputs();
+                @(negedge clk);scan_done=0;
+            end
+        join
+        command(2,0);safe_outputs();
+        command(1,1);
+        if(topology_scan_enable!==1) $fatal(1,"scanner did not arm before Stop");
+        command(7,1);
+        scan_done=1;scan_success=1; // A late scan reply cannot prepare a stopped station.
+        @(posedge clk);#1;
+        if(state!==0 || topology_scan_enable!==0) $fatal(1,"Stop consumed stale scan evidence");
+        @(negedge clk);scan_done=0;
+        command(2,0);safe_outputs();
         scan(1);clock_half_period_ticks=0;command(2,0);safe_outputs();
         clock_half_period_ticks=3;
         for(permit_index=0;permit_index<6;permit_index=permit_index+1) begin
@@ -90,7 +111,12 @@ module tb_permit_matrix;
             @(posedge clk);#1;
             if(experiment_clock!==((tick/3)%2)) $fatal(1,"half-period boundary tick=%d clock=%b",tick,experiment_clock);
         end
-        @(negedge clk);fault_in=1;#1;safe_outputs();fault_in=0;#1;safe_outputs();
+        @(negedge clk);fault_in=1;#1;safe_outputs();
+        reset_n=0;#1;safe_outputs();
+        @(negedge clk);reset_n=1;
+        @(posedge clk);#1;safe_outputs();
+        if(state!==8 || error_code!==5) $fatal(1,"reset hid a persistent interlock fault");
+        @(negedge clk);fault_in=0;#1;safe_outputs();
         command(6,0);safe_outputs();reset();command(6,0);safe_outputs();
         capture_request=1;generator_request=1;#1;
         if({la,scope,generator,capture_valid,output_enable,sdram_request}!==6'b0) $fatal(1,"instrument availability under requests");

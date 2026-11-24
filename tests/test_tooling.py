@@ -18,6 +18,41 @@ def run_script(name, *args):
                           capture_output=True, text=True, timeout=90)
 
 
+def test_allocator_bridge_reuses_the_owned_session(tmp_path):
+    session = Path(os.environ['CIRNET_ARTIFACTS_SESSION']).resolve(strict=True)
+    subdirectory = tmp_path.resolve(strict=True).relative_to(session) / 'bridge-output'
+    code = (
+        'import json, sys; from artifact_paths import artifact_directory; '
+        'print(json.dumps([str(artifact_directory()), str(artifact_directory(sys.argv[1]))]))'
+    )
+    result = subprocess.run(
+        [sys.executable, '-B', '-c', code, subdirectory.as_posix()],
+        cwd=ROOT / 'scripts', capture_output=True, text=True, timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    active, output = map(Path, json.loads(result.stdout))
+    assert active.resolve(strict=True) == session
+    assert output.resolve(strict=True) == session / subdirectory
+
+
+def test_allocator_bridge_rejects_an_unselected_module(tmp_path):
+    replacement = tmp_path / 'allocator.mjs'
+    marker = tmp_path / 'executed'
+    replacement.write_text(
+        'import {writeFileSync} from "node:fs"; writeFileSync(process.argv[2], "executed");',
+        encoding='utf-8',
+    )
+    env = {**os.environ, 'CIRNET_ARTIFACTS_CLI': str(replacement)}
+    code = 'import sys; from artifact_paths import artifact_directory; artifact_directory(sys.argv[1])'
+    result = subprocess.run(
+        [sys.executable, '-B', '-c', code, str(marker)], cwd=ROOT / 'scripts',
+        env=env, capture_output=True, text=True, timeout=30,
+    )
+    assert result.returncode != 0
+    assert 'Contracts DEV allocator SHA256 differs from selection.' in result.stderr
+    assert not marker.exists()
+
+
 def test_rtl_gate_rejects_missing_explicit_toolchain(tmp_path):
     script = ROOT/'scripts/check_rtl.py'
     assert script.is_file(), 'mandatory RTL acceptance runner is missing'

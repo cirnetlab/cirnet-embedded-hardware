@@ -25,3 +25,5 @@ node scripts/build-source.mjs --output (Join-Path $env:CIRNET_ARTIFACTS_SESSION 
 ```
 
 Cả `LAB_FIRST_RTL_PASS` và `PERMIT_MATRIX_RTL_PASS` phải đến từ mô phỏng thật. Gói chứa RTL, testbench và danh mục tệp trong `fpga-artifact.json`; bước đóng gói ghi mã băm của biên nhận Contracts và schema logic đã chọn. Bitstream, thời gian, bảo vệ điện và kiểm chứng trên phần cứng cần bằng chứng cho bo mạch cụ thể.
+
+Ma trận điều kiện cho phép kiểm tra rằng STATUS giữ nguyên kết quả quét lỗi, Stop loại bỏ kết quả quét đến muộn và lỗi liên động vẫn có hiệu lực sau reset nếu nguyên nhân còn tồn tại. Bộ kiểm thử công cụ xác minh bộ chuyển tiếp Python dùng lại phiên cấp phát của Contracts và từ chối mô-đun có nội dung khác trước khi gọi.
