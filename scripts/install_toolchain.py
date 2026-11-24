@@ -1,55 +1,15 @@
 """Install only the digest-pinned official OSS CAD Suite into an owned session."""
 import argparse
-import hashlib
 import json
 import os
-from pathlib import Path, PurePosixPath
-import platform
+from pathlib import Path
 import subprocess
 import tarfile
 import uuid
 
 from artifact_download import download_artifact
 from artifact_paths import artifact_directory, validate_artifact_directory
-
-ROOT=Path(__file__).resolve().parents[1]
-
-
-def sha256(path):
-    with Path(path).open('rb') as stream:
-        return hashlib.file_digest(stream,'sha256').hexdigest()
-
-
-def selected_platform():
-    if platform.machine().lower() not in {'amd64','x86_64'}:
-        raise ValueError('Pinned RTL toolchain supports x64 Windows/Linux only.')
-    if os.name=='nt': return 'windows-x64'
-    if platform.system()=='Linux': return 'linux-x64'
-    raise ValueError('Pinned RTL toolchain supports Windows/Linux only.')
-
-
-def tool_env(root,runtime):
-    root=Path(root);runtime=Path(runtime)
-    selected={key:value for key,value in os.environ.items() if not key.upper().startswith(('LD_','DYLD_'))
-              and key.upper() not in {'LIBPATH','SHLIB_PATH','IVERILOG_ROOT','VPI_MODULE_PATH',
-                                     'IVERILOG_DUMPER','IVERILOG_ICONFIG','GCONV_PATH','BASH_ENV','ENV'}}
-    return {**selected,'PATH':os.pathsep.join([str(root/'bin'),str(root/'lib'),os.environ.get('PATH','')]),
-            'YOSYSHQ_ROOT':str(root),'TMP':str(runtime),'TEMP':str(runtime),'TMPDIR':str(runtime),
-            'PYTHONDONTWRITEBYTECODE':'1'}
-
-
-def checked_members(archive):
-    members=archive.getmembers();seen=set()
-    for item in members:
-        path=PurePosixPath(item.name)
-        if ('\\' in item.name or path.is_absolute() or '..' in path.parts or
-            not path.parts or path.parts[0]!='oss-cad-suite' or ':' in item.name or item.name in seen):
-            raise ValueError('Unsafe or duplicate toolchain archive member.')
-        seen.add(item.name)
-        if not (item.isfile() or item.isdir() or item.issym() or item.islnk()):
-            raise ValueError('Unsupported toolchain archive member.')
-    return members
-
+from rtl_toolchain import ROOT, checked_members, selected_platform, sha256, tool_env
 
 def install(archive=None):
     key=selected_platform()

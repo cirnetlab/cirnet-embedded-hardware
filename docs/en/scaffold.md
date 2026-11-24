@@ -12,6 +12,17 @@ The [FPGA Architecture](https://github.com/cirnetlab/cirnet-remote/blob/master/d
 | Hardware | Local station driver, private FPGA transport and station-level protection. |
 | Contracts and Remote | Contracts owns the logical `1.0-scaffold` schema and reserved register-map version. Remote owns the Web API, scheduler, authorization and Lab release selection. |
 
+## Source layout
+
+| Path | Responsibility |
+| --- | --- |
+| [`rtl/experiment-controller/`](../../rtl/experiment-controller) | Lab-First control sequencer and simulated safety permits. |
+| [`rtl/instrument/`](../../rtl/instrument) | Reserved instrument interfaces and availability outputs. |
+| [`verification/rtl/`](../../verification/rtl) | [Behavioral testbenches](guides/testbenches.md) for Lab-First control and the permit matrix. |
+| [`integration/toolchain-lock.json`](../../integration/toolchain-lock.json) | Platform-specific pins used by the [verification commands](verification.md). |
+
+## Controller and instrument behavior
+
 The EP4CE6E22C8N prototype target has no external SDRAM. In simulation, the controller moves through SAFE → SCANNING → SCANNED → PREPARED → ROUTED → POWERED → ARMED → RUNNING. A successful scan indicates readiness of the observation step. Electrical safety and topology correctness remain separate checks.
 
 Reset enters SAFE with drive, routing and experiment clock disabled. The simulated controller requires a safe plan, route readiness, protection and an armed watchdog before enabling drive. These permits remain live. A fault or watchdog assertion immediately inhibits outputs and latches FAULT. Reset after clearance invalidates the old scan and plan. The experiment clock uses abstract control ticks. See the [controller specification](architecture/controller.md).

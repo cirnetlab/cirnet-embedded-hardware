@@ -12,6 +12,17 @@
 | Hardware | Trình điều khiển trạm cục bộ, lớp truyền tải FPGA nội bộ và bảo vệ tại trạm. |
 | Contracts và Remote | Contracts sở hữu schema logic `1.0-scaffold` và phiên bản bản đồ thanh ghi dành sẵn. Remote sở hữu API Web, bộ lập lịch, phân quyền và lựa chọn bản phát hành Lab. |
 
+## Bố cục mã nguồn
+
+| Đường dẫn | Trách nhiệm |
+| --- | --- |
+| [`rtl/experiment-controller/`](../../rtl/experiment-controller) | Trình tự điều khiển Lab-First và các điều kiện an toàn trong mô phỏng. |
+| [`rtl/instrument/`](../../rtl/instrument) | Giao diện thiết bị đo dành sẵn và các đầu ra báo khả dụng. |
+| [`verification/rtl/`](../../verification/rtl) | [Testbench hành vi](guides/testbenches.md) cho điều khiển Lab-First và ma trận điều kiện cho phép. |
+| [`integration/toolchain-lock.json`](../../integration/toolchain-lock.json) | Các bản công cụ ghim theo nền tảng dùng trong [lệnh kiểm chứng](verification.md). |
+
+## Hành vi của bộ điều khiển và thiết bị đo
+
 Mẫu thử hướng tới EP4CE6E22C8N không có SDRAM ngoài. Trong mô phỏng, bộ điều khiển đi qua SAFE → SCANNING → SCANNED → PREPARED → ROUTED → POWERED → ARMED → RUNNING. Quét thành công cho biết bước quan sát đã sẵn sàng. An toàn điện và tính đúng của tô pô vẫn được kiểm tra riêng.
 
 Reset đưa bộ điều khiển về SAFE và tắt điều khiển đầu ra, định tuyến, xung nhịp thí nghiệm. Trước khi cho phép điều khiển đầu ra, bộ điều khiển mô phỏng yêu cầu kế hoạch an toàn, định tuyến sẵn sàng, bảo vệ độc lập và watchdog đã kích hoạt. Các điều kiện này tiếp tục được kiểm tra trong khi chạy. Tín hiệu lỗi hoặc watchdog chặn đầu ra ngay và giữ trạng thái FAULT. Reset sau khi hết lỗi vô hiệu hóa kết quả quét và kế hoạch cũ. Xung nhịp thí nghiệm tính theo nhịp điều khiển trừu tượng. Xem [đặc tả bộ điều khiển](architecture/controller.md).

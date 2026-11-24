@@ -137,7 +137,7 @@ def test_archive_derived_execution_closure_rejects_missing_or_modified_support(t
             bundle.addfile(item,io.BytesIO(data))
             path=extracted/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
     code=('import sys;sys.path.insert(0,sys.argv[1]);'
-          'from check_rtl import authenticate_execution_files;'
+          'from rtl_toolchain import authenticate_execution_files;'
           'authenticate_execution_files(sys.argv[2],sys.argv[3],sys.argv[4])')
     command=[sys.executable,'-B','-c',code,str(ROOT/'scripts'),str(extracted),str(archive),
              hashlib.sha256(archive.read_bytes()).hexdigest()]

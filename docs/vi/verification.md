@@ -17,6 +17,8 @@ python -B scripts/install_toolchain.py
 
 Để kiểm chứng ngoại tuyến, cài các wheel đã ghim mã băm bằng `--no-index --find-links <wheelhouse>` và chạy `python -B scripts/install_toolchain.py --archive $ossCadArchive`. Chọn đường dẫn tuyệt đối của gói lưu trữ trong thư mục đầu vào bên ngoài. Script cài đặt xác minh gói theo mã băm của nền tảng trong [tệp khóa bộ công cụ](../../integration/toolchain-lock.json).
 
+Trong kho mã, `scripts/install_toolchain.py` cài bộ công cụ đã ghim vào phiên thuộc quyền sở hữu. `scripts/check_rtl.py` xác minh biên nhận Contracts đã chọn, phân tích RTL và chạy cả hai testbench. Cả hai dùng `scripts/rtl_toolchain.py` để kiểm tra chung nền tảng, gói lưu trữ và môi trường thực thi. `scripts/build-source.mjs` đóng gói RTL, testbench, tài liệu và đầu vào tích hợp theo danh mục.
+
 Đặt `CIRNET_FPGA_TOOLCHAIN_ROOT` thành thư mục cài đặt do script in ra hoặc chọn bộ công cụ đã ghim tương ứng. Cổng kiểm chứng xác thực gói và các phụ thuộc thực thi trước khi chạy slang và mô phỏng Icarus.
 
 ```powershell

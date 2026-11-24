@@ -17,6 +17,8 @@ python -B scripts/install_toolchain.py
 
 For offline verification, install the same hash-pinned wheels with `--no-index --find-links <wheelhouse>` and use `python -B scripts/install_toolchain.py --archive $ossCadArchive`. Select an absolute archive path in the external inputs directory. The toolchain installer verifies the archive against the platform pin in [the toolchain lock](../../integration/toolchain-lock.json).
 
+In the checkout, `scripts/install_toolchain.py` installs the pinned toolchain into an owned session. `scripts/check_rtl.py` verifies the selected Contracts receipt, elaborates the RTL and runs both benches. Both use `scripts/rtl_toolchain.py` for their common platform, archive and execution environment checks. `scripts/build-source.mjs` packages the inventoried RTL, testbenches, documentation and integration inputs.
+
 Set `CIRNET_FPGA_TOOLCHAIN_ROOT` to the installed root printed by the toolchain script, or select an existing matching pinned toolchain. The toolchain gate authenticates the archive and execution dependencies before slang elaboration and Icarus simulation.
 
 ```powershell

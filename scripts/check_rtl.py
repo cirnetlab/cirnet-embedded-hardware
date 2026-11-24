@@ -1,102 +1,17 @@
 """Verify selected Contracts, slang elaboration and actual RTL simulation."""
 import argparse
-import hashlib
 from importlib.metadata import distribution
 import json
-import os
 try:
     from scripts.environment import getenv
 except ModuleNotFoundError:
     from environment import getenv
-from pathlib import Path, PurePosixPath
-import posixpath
-import re
+from pathlib import Path
 import subprocess
-import tarfile
 import uuid
 
-from artifact_paths import artifact_directory, validate_artifact_directory
-from install_toolchain import ROOT, checked_members, selected_platform, sha256, tool_env
-
-
-def authenticate_execution_files(root,archive,expected_archive_sha256):
-    """Archive-derived required native helpers, configs, wrappers and libraries.
-
-    Linux modeled-layout tests do not establish actual hosted Linux execution.
-    """
-    root=Path(root).resolve();archive=Path(archive)
-    if sha256(archive)!=expected_archive_sha256:
-        raise ValueError('Toolchain archive SHA256 differs from the pinned release.')
-    with tarfile.open(archive,'r:gz') as bundle:
-        members=checked_members(bundle)
-        records={item.name.removeprefix('oss-cad-suite/'):item for item in members if not item.isdir()}
-        required={name for name in records if name.startswith(('bin/iverilog','bin/vvp','libexec/','lib/ivl/'))
-                  or name.lower().endswith(('.dll','.vpi')) or re.search(r'\.so(?:\.|$)',name.lower())}
-        if not required:raise ValueError('Toolchain archive has no execution support inventory.')
-        targets={};pending=list(required)
-        while pending:
-            name=pending.pop();item=records[name]
-            if not (item.issym() or item.islnk()):continue
-            if item.issym():
-                if PurePosixPath(item.linkname).is_absolute():raise ValueError('Unsafe support symlink target.')
-                target=posixpath.normpath(posixpath.join(posixpath.dirname(name),item.linkname))
-            else:target=item.linkname.removeprefix('oss-cad-suite/')
-            if target.startswith('../') or target not in records:
-                raise ValueError('Toolchain support link target is absent or unsafe.')
-            targets[name]=target
-            if target not in required:required.add(target);pending.append(target)
-        hashes={}
-        # Keep archive order to avoid repeated backward decompression seeks.
-        for item in members:
-            name=item.name.removeprefix('oss-cad-suite/')
-            if name not in required or not item.isfile():continue
-            stream=bundle.extractfile(item)
-            if stream is None:raise ValueError('Toolchain support archive member has no bytes.')
-            expected=hashlib.file_digest(stream,'sha256').hexdigest();hashes[name]=expected
-            path=root/name
-            if not path.is_file() or path.is_symlink() or not path.resolve().is_relative_to(root) or sha256(path)!=expected:
-                raise ValueError('Toolchain support file missing or modified: '+name)
-        for name,target in targets.items():
-            item=records[name];path=root/name
-            if item.issym():
-                if not path.is_symlink() or os.readlink(path).replace('\\','/')!=item.linkname:
-                    raise ValueError('Toolchain support symlink target differs: '+name)
-            elif not path.is_file() or path.is_symlink() or not path.samefile(root/target):
-                raise ValueError('Toolchain support hardlink differs: '+name)
-            visited={name};final=target
-            while final in targets:
-                if final in visited:raise ValueError('Toolchain support link cycle.')
-                visited.add(final);final=targets[final]
-            if (not path.is_file() or not path.resolve().is_relative_to(root) or
-                final not in hashes or sha256(path)!=hashes[final]):
-                raise ValueError('Toolchain support linked bytes differ: '+name)
-    return len(required)
-
-
-def verify_toolchain(root,provenance=None):
-    root=Path(root).resolve()
-    validate_artifact_directory(root)
-    provenance=Path(provenance) if provenance else (root/'.cirnet-toolchain.json' if (root/'.cirnet-toolchain.json').exists() else root/'.netcircuit-toolchain.json')
-    value=json.loads(provenance.read_text())
-    lock=json.loads((ROOT/'integration/toolchain-lock.json').read_text())
-    key=selected_platform();selected=lock['platforms'][key]
-    if (value.get('schemaVersion')!=1 or value.get('platform')!=key or value.get('release')!=lock['tag']
-        or value.get('archiveSha256')!=selected['sha256']):
-        raise ValueError('Toolchain provenance differs from the pinned platform/archive.')
-    archive=Path(value['archivePath'])
-    validate_artifact_directory(archive.parent)
-    if not archive.is_absolute():raise ValueError('Toolchain archive path must be absolute.')
-    authenticated=authenticate_execution_files(root,archive,selected['sha256'])
-    tools={}
-    for name in ('iverilog','vvp'):
-        relative='bin/'+name+('.exe' if key=='windows-x64' else '')
-        executable=(root/relative).resolve()
-        if not executable.is_relative_to(root): raise ValueError('Toolchain executable escaped its owned root.')
-        record=value['tools'][name]
-        if record['path']!=relative or sha256(executable)!=record['sha256']:
-            raise ValueError('Toolchain executable hash differs from selected provenance: '+name)
-        tools[name]=executable
-    return tools,{**value,'authenticatedExecutionFiles':authenticated},selected
+from artifact_paths import artifact_directory
+from rtl_toolchain import ROOT, sha256, tool_env, verify_toolchain
 
 
 def compile_slang():
