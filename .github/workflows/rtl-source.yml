@@ -1,0 +1,26 @@
+name: RTL source checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  layout:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Check tracked RTL and testbench layout
+        shell: pwsh
+        run: |
+          $python = Join-Path $env:RUNNER_TEMP 'rtl-venv/Scripts/python.exe'
+          python -m venv (Join-Path $env:RUNNER_TEMP 'rtl-venv')
+          & $python -m pip install --require-hashes -r requirements-verification.lock
+          & $python -B -m pytest --basetemp (Join-Path $env:RUNNER_TEMP 'rtl-layout') tests/test_rtl_layout.py
