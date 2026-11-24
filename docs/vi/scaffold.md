@@ -4,7 +4,7 @@
 
 [Mục lục tài liệu](index.md)
 
-[Kiến trúc FPGA](https://github.com/cirnetlab/cirnet-remote-next/blob/master/docs/cirnetlab-FPGA-architecture-vi.md) định nghĩa đích thiết kế bo trong phạm vi [quy tắc an toàn Lab-First](https://github.com/cirnetlab/cirnet-remote-next/blob/master/docs/cirnet-architecture-lab-first-vi.md).
+[Kiến trúc FPGA](https://github.com/cirnetlab/cirnet-remote/blob/master/docs/cirnetlab-FPGA-architecture-vi.md) định nghĩa đích thiết kế bo trong phạm vi [quy tắc an toàn Lab-First](https://github.com/cirnetlab/cirnet-remote/blob/master/docs/cirnet-architecture-lab-first-vi.md).
 
 | Bên sở hữu | Ranh giới |
 | --- | --- |
