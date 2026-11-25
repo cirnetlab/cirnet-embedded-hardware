@@ -1,13 +1,9 @@
 # Licensing — cirnet-embedded-hardware
 
-CIRNETLAB's [organization licensing policy](https://github.com/cirnetlab/.github/blob/main/LICENSING.md) establishes a proprietary-first direction for future materials whose rights have been verified.
+The [CIRNETLAB organization policy](https://github.com/cirnetlab/.github/blob/main/LICENSING.md) and [LICENSE](LICENSE) apply to eligible new original first-party material from 2026-11-25. Existing valid grants through revision `4c3b91ebbb4097ba2d905edfcb23dffb8462fc90` and third-party rights remain unaffected. Historical GPLv3 text is preserved verbatim in LICENSE after the proprietary notice and in its existing separate file. Multiple texts do not establish dual licensing.
 
-**Status: licensing transition pending ownership and compliance review.** This document does not change any existing license grant. Preserve existing license texts, copyright notices, historical grants and third-party terms. Multiple license texts alone do not establish dual licensing. No new proprietary restrictions apply to existing open-source grants.
-
-## Repository-specific review
+## Component scope and release checks
 
 Preserve GPLv3 text; review RTL, PCB/CAD, toolchains and IP provenance. CERN-OHL-W-2.0 is only a possible separately approved hardware exception.
 
-## Approval before relicensing
-
-Record verified legal rightsholder(s), contributor and upstream rights, exact covered paths and exceptions, effective revision/date and applicable dependency/distribution obligations. Only then adopt the approved proprietary license for eligible materials. Do not claim ownership of third-party content or alter functional source code during licensing review.
+Do not distribute a proprietary combination until actual file-level rights, dependency obligations and package metadata are reconciled. Existing metadata is unchanged. No third-party license is overridden. CERN-OHL-W-2.0 and CC-BY-4.0 require explicit component designation.
