@@ -31,3 +31,7 @@ node scripts/build-source.mjs --output (Join-Path $env:CIRNET_ARTIFACTS_SESSION 
 Both `LAB_FIRST_RTL_PASS` and `PERMIT_MATRIX_RTL_PASS` must come from actual simulation. The package contains RTL, testbenches and an inventory in `fpga-artifact.json`; source packaging records the selected Contracts receipt and logical schema digests. Bitstream, timing, electrical protection and hardware-in-the-loop qualification require board-specific evidence.
 
 The permit matrix checks that STATUS preserves failed scan evidence, Stop discards late scan completions, and reset leaves a persistent interlock fault effective. The tooling tests verify that the Python adapter reuses the owned Contracts allocator session and rejects a module with different bytes before invoking it.
+
+## Local development storage
+
+Set `CIRNET_LOCAL_STORAGE_ROOT` before allocating a standalone session. Use a reviewed allocator with centralized-storage support and set CIRNET_ARTIFACTS_CLI_SHA256 from those exact bytes. Reuse the session for related build, package and RTL verification commands. Reuse a compatible toolchain by selecting its existing verified root. Candidate assembly inherits the Remote session.

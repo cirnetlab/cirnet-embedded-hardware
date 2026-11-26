@@ -28,6 +28,9 @@ def _call(arguments):
 
 
 def artifact_directory(subdirectory=''):
+    if 'CIRNET_LOCAL_STORAGE_ROOT' in os.environ:
+        # Older selected DEV modules must not silently allocate into OS temp.
+        _call(['--parent-info'])
     if not getenv('CIRNET_ARTIFACTS_SESSION'):
         os.environ['CIRNET_ARTIFACTS_SESSION'] = str(_call([]))
     return _call([subdirectory] if subdirectory else [])
