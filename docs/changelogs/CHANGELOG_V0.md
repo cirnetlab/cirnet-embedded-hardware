@@ -1,14 +1,28 @@
-# CIRNET Embedded Hardware v0
+# CIRNET Embedded Hardware version 0 changelog
 
-## 0.3.0-dev.1 (development)
+[Changelog index](README.md)
+
+## Unreleased
+
+### Changed
+
+- Standardize English major-version changelog navigation.
+
+## v0.3.0-dev.1 — Development
+
+Git tags and GitHub Releases provide no publication date for this development version.
+
+### Added
+
+- Verify allocator session reuse and digest rejection, late scanner replies, and reset with an active interlock fault.
+
+### Changed
 
 - Give the installer and RTL verification commands a common module for pinned toolchain checks. Document the RTL, testbench and tool responsibilities.
-- Dùng chung mô-đun kiểm tra bộ công cụ đã ghim cho lệnh cài đặt và kiểm chứng RTL. Ghi rõ trách nhiệm của RTL, testbench và các công cụ.
 - Migrate the controller and instrument RTL and both behavioral testbenches. Bind source candidates to the native Contracts receipt.
-- Chuyển RTL bộ điều khiển, thiết bị đo và cả hai testbench hành vi. Gắn ứng viên mã nguồn với biên nhận Contracts native.
 - Link the verified RTL scaffold to the FPGA and CIRNET Lab-First targets.
-- Liên kết RTL scaffold đã kiểm chứng với kiến trúc đích FPGA và CIRNET Lab-First.
-- Verify allocator session reuse and digest rejection, late scanner replies, and reset with an active interlock fault.
-- Kiểm chứng việc dùng lại phiên cấp phát và từ chối mã băm sai, phản hồi quét đến muộn và reset khi lỗi liên động còn tồn tại.
 - Document offline RTL verification with the selected native Contracts receipt, hash-pinned wheels and OSS CAD Suite archive.
-- Ghi lại quy trình kiểm chứng RTL ngoại tuyến với biên nhận Contracts native, các wheel và gói OSS CAD Suite đã ghim mã băm.
+
+**Source**
+
+- [Native implementation baseline](https://github.com/cirnetlab/cirnet-embedded-hardware/commit/0373bf6e4f0407d0595a9c9f2a1c8e16b341d75e)
