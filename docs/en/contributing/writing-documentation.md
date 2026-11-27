@@ -7,6 +7,6 @@ Keep the root README in English and link both indexes. Maintain current pages at
 Use one `CHANGELOG_V<major>.md` per released major. Keep Unreleased first and list releases in descending order. Give each version a SemVer heading, a linked contents entry, an evidenced date and its tag target. Distinguish the published archive, a candidate build and the current checkout. [Release changelogs](../../changelogs/README.md)
 
 
-Keep dated verification and migration records at their recorded paths and in their source language. Preserve README anchors, approved toolchain and artifact identities, and compatibility references. Before moving a document, trace Markdown, source, test, CI and packaging references. Cite superseded records at fixed Git revisions. [Historical verification](../index.md#history)
+Keep dated verification and migration records at their recorded paths and in their source language. Preserve README anchors, approved toolchain and artifact identities, and compatibility references. Before moving a document, trace Markdown, source, test, CI and packaging references. Cite superseded records at fixed Git revisions.
 
 Check each affected language pair, link path, case, heading anchor and cross-repository reference. Record the revision, inputs and scope of a verification result. Keep raw evidence in an allocator-owned session outside checkouts, worktrees and Git directories. Update the relevant technical pages and changelog after verification, then review Git diff, status and ignored output. [Verification guide](../verification.md)
